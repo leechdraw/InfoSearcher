@@ -1,3 +1,4 @@
+using System;
 using System.Text.RegularExpressions;
 
 namespace InfoSearcher
@@ -15,6 +16,19 @@ namespace InfoSearcher
             }
 
             return _configFileMatcher.IsMatch(fileName);
+        }
+
+        public SiteGrabberBase CreateGrabber(MainSettings settings, string sf)
+        {
+            return new SiteGrabberBase();
+        }
+    }
+
+    public class SiteGrabberBase
+    {
+        public void Grab()
+        {
+            Console.WriteLine("GRabber");
         }
     }
 }
