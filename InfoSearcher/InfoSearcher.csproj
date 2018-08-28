@@ -13,7 +13,7 @@
       <None Update="settings.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="SiteConfigs\NSO_simple.json">
+      <None Update="SiteConfigs\klhmo_simple.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
