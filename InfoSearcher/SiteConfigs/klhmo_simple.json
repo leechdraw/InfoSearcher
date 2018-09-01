@@ -1,5 +1,10 @@
 {
   "Title": "Комитет лесного хозяйства Московской области",
   "MainLink" : "http://klh.mosreg.ru/sobytiya/novosti_ministerstva",
-  "OutName" : "klhm"
+  "OutName" : "klhm",
+  "NewsListSelector" : "h3.event__title a",
+  "NewsContentSelector": "div.page",
+  "SearchFor": [
+    "пожар"
+  ]
 }
