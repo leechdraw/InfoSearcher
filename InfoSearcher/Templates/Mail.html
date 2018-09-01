@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Сводная информация</title>
+    <style>
+        th {
+            font-style: oblique;
+            border-right: solid black 1px;
+            padding: 5px;
+
+            border-bottom: 1px solid black;
+        }
+        td {
+            padding: 5px;
+            font-style: oblique;
+            border-right: solid black 1px;
+
+            border-bottom: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h2>Ссылки на прикрепленные файлы</h2>
+    <table>
+        <tbody>
+        <tr><th>Сайт</th><th>Файл</th><th>Ссылка на новость</th><th>Мета</th></tr>
+        {DATA-PLACE}
+        </tbody>
+    </table>
+</body>
+</html>

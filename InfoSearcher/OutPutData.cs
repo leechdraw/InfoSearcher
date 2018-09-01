@@ -1,3 +1,5 @@
+using System;
+
 namespace InfoSearcher
 {
     public class OutPutData
@@ -7,5 +9,7 @@ namespace InfoSearcher
         public string Content { get; set; }
         
         public string MainLink { get; set; }
+        
+        public DateTime DownLoadDate { get; set; }
     }
 }

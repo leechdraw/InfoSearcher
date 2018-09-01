@@ -9,6 +9,8 @@ namespace InfoSearcher
         
         public string SiteConfigDir { get; set; }
 
+        public string BodyHtmlTemplate { get; set; }
+
         public static MainSettings Load(string fileName)
         {
             if (!File.Exists(fileName))
