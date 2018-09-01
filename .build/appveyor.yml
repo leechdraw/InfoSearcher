@@ -14,8 +14,7 @@ before_build:
 # Display minimal restore text
 - cmd: dotnet restore ./InfoSearcher.sln --verbosity m
 build_script:
-# output will be in ./src/bin/debug/netcoreapp1.1/publish
-- cmd: dotnet publish -c Release ../InfoSearcher/InfoSearcher.csproj
+- cmd: dotnet publish -c Release ./InfoSearcher/InfoSearcher.csproj
 after_build:
 # For once the build has completed
 artifacts:
