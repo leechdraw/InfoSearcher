@@ -12,11 +12,10 @@ before_build:
 # Display .NET Core version
 - cmd: dotnet --version
 # Display minimal restore text
-- cmd: dir
-- cmd: dotnet restore ./InfoSearcher/InfoSearcher.csporj --verbosity m
+- cmd: dotnet restore ../InfoSearcher/InfoSearcher.csproj --verbosity m
 build_script:
 # output will be in ./src/bin/debug/netcoreapp1.1/publish
-- cmd: dotnet publish -c Release ./InfoSearcher/InfoSearcher.csporj
+- cmd: dotnet publish -c Release ../InfoSearcher/InfoSearcher.csproj
 after_build:
 # For once the build has completed
 artifacts:
