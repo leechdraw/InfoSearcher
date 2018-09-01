@@ -14,7 +14,7 @@ before_build:
 # Display minimal restore text
 - cmd: dotnet restore ./InfoSearcher.sln --verbosity m
 build_script:
-- cmd: dotnet publish -c Release --self-contained ./InfoSearcher/InfoSearcher.csproj
+- cmd: dotnet publish -c Release ./InfoSearcher/InfoSearcher.csproj
 after_build:
 # For once the build has completed
 artifacts:
