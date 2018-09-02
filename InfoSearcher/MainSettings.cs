@@ -11,6 +11,20 @@ namespace InfoSearcher
 
         public string BodyHtmlTemplate { get; set; }
 
+        public string From { get; set; }
+
+        public string[] To { get; set; }
+
+        public string SmtpServer { get; set; }
+
+        public int? SmtpPort { get; set; }
+
+        public string SmtpLogin { get; set; }
+
+        public string SmtpPass { get; set; }
+        
+        public bool? SmtpUseSsl { get; set; }
+
         public static MainSettings Load(string fileName)
         {
             if (!File.Exists(fileName))
@@ -18,7 +32,19 @@ namespace InfoSearcher
                 throw new FileNotFoundException(fileName);
             }
 
-            return JsonConvert.DeserializeObject<MainSettings>(File.ReadAllText(fileName));
+            var subResult = JsonConvert.DeserializeObject<MainSettings>(File.ReadAllText(fileName));
+
+            if (subResult.SmtpPort == null)
+            {
+                subResult.SmtpPort = 25;
+            }
+
+            if (subResult.SmtpUseSsl == null)
+            {
+                subResult.SmtpUseSsl = false;
+            }
+
+            return subResult;
         }
     }
 }
