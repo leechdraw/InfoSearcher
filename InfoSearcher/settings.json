@@ -1,5 +1,18 @@
 {
   "OutputDir": "outdata",
   "SiteConfigDir": "./SiteConfigs",
-  "BodyHtmlTemplate": "./Templates/Mail.html"
+  "Mail" : {
+    "BodyHtmlTemplate": "./Templates/Mail.html",
+    "From" : "",
+    "To" : [
+      "",
+      ""
+    ],
+    "Subject" : "Subject",
+    "SmtpServer" : "smtp.mail.ru",
+    "SmtpPort" : 465,
+    "SmtpLogin" : "",
+    "SmtpPass" : "",
+    "SmtpUseSsl" : "true"
+  }
 }

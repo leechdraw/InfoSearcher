@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Mail;
 using System.Text;
+using AegisImplicitMail;
 using CsQuery.ExtensionMethods.Internal;
 using Newtonsoft.Json;
 
@@ -13,6 +13,7 @@ namespace InfoSearcher
     public class DataSender
     {
         private const string HtmlTemplateFileName = "data_{0}.html";
+        private const string ArchiveFolderName = "Archive";
         private readonly MainSettings _mainSettings;
 
         public DataSender(MainSettings mainSettings)
@@ -26,7 +27,8 @@ namespace InfoSearcher
             var dataFiles = Directory.GetFiles(_mainSettings.OutputDir, "*.dat", SearchOption.AllDirectories);
             var onlyNewData = dataFiles.Where(x =>
                 Path.GetDirectoryName(x).Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries)
-                    .Last().ToLowerInvariant() != "Archive");
+                    .Last().ToLowerInvariant() != ArchiveFolderName)
+                .ToList();
 
             var datas = onlyNewData.Select(x =>
             {
@@ -49,7 +51,7 @@ namespace InfoSearcher
                 }
 
                 var bodyHtmlFileName = Path.Combine(tempFolder, "body.html");
-                var body = CreateBody(datas, _mainSettings.BodyHtmlTemplate);
+                var body = CreateBody(datas, _mainSettings.Mail.BodyHtmlTemplate);
                 File.WriteAllText(bodyHtmlFileName, body);
                 SendEmail(_mainSettings, bodyHtmlFileName, attachmentFiles);
             }
@@ -62,33 +64,50 @@ namespace InfoSearcher
             }
 
             // 3 move sent data to archive folder
+            foreach (var file in onlyNewData)
+            {
+                var fileName = Path.GetFileName(file);
+                var dir = Path.GetDirectoryName(file);
+                var archiveDir = Path.Combine(dir, ArchiveFolderName);
+                if (!Directory.Exists(archiveDir))
+                {
+                    Directory.CreateDirectory(archiveDir);
+                }
+
+                var archiveFileName = Path.Combine(archiveDir, fileName);
+                File.Move(file, archiveFileName);
+            }
         }
 
         private static void SendEmail(MainSettings mainSettings, string bodyFile, IEnumerable<string> attachments)
         {
-            using (var client = new SmtpClient())
+            using (var client = new SmtpSocketClient())
             {
-                var message = new MailMessage
+                var message = new MimeMailMessage
                 {
-                    From = new MailAddress(mainSettings.From),
+                    From = new MimeMailAddress(mainSettings.Mail.From),
                     IsBodyHtml = true,
-                    Body = File.ReadAllText(bodyFile)
+                    Body = File.ReadAllText(bodyFile),
+                    Subject = mainSettings.Mail.Subject
                 };
 
-                var toAddresses = mainSettings.To.Select(x => new MailAddress(x));
+                var toAddresses = mainSettings.Mail.To.Select(x => new MimeMailAddress(x));
                 message.To.AddRange(toAddresses);
-                var mailAttachments = attachments.Select(x => new Attachment(x));
+                var mailAttachments = attachments.Select(x => new MimeAttachment(x));
                 message.Attachments.AddRange(mailAttachments);
+                
+                client.Host = mainSettings.Mail.SmtpServer;
+                client.Port = 465;
+               
+                    client.User = mainSettings.Mail.SmtpLogin;
+                    client.Password = mainSettings.Mail.SmtpPass;
 
-                client.Host = mainSettings.SmtpServer;
-                client.Port = mainSettings.SmtpPort ?? 25;
-                client.EnableSsl = mainSettings.SmtpUseSsl ?? false;
-                if (!string.IsNullOrEmpty(mainSettings.SmtpLogin) && !string.IsNullOrEmpty(mainSettings.SmtpPass))
-                {
-                    client.Credentials = new NetworkCredential(mainSettings.SmtpLogin, mainSettings.SmtpPass);
-                }
+               
 
-                client.Send(message);
+                client.SslType = SslMode.Ssl;
+                client.AuthenticationMode = AuthenticationType.Base64;
+                
+                client.SendMail(message);
             }
         }
 

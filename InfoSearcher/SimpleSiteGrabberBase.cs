@@ -30,7 +30,7 @@ namespace InfoSearcher
             }
 
             var cq = CQ.Create(data);
-            var newsLink = cq.Find(_config.NewsListSelector).Select(x => x.GetAttribute("href")).Where(IsNewLink);
+            var newsLink = cq.Find(_config.NewsListSelector).Select(x => x.GetAttribute("href")).Where(x => IsNewLink(x, outputDir));
 
             foreach (var link in newsLink)
             {
@@ -63,10 +63,13 @@ namespace InfoSearcher
             File.WriteAllText(fileName, JsonConvert.SerializeObject(outData));
         }
 
-        private bool IsNewLink(string arg)
+        private static bool IsNewLink(string s, string searchDir)
         {
-            // todo create storage for links and use it here
-            return true;
+            var filesInDir = Directory.GetFiles(searchDir, "*.dat", SearchOption.AllDirectories);
+            var hash = s.GetHashString();
+              
+            
+            return !filesInDir.Any(x=>x.Contains(hash));
         }
 
         private static string GetData(string url)
