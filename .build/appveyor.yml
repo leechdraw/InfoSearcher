@@ -3,7 +3,11 @@ branches:
   only:
   - master
 image: Visual Studio 2017
+configuration: Release
 before_build:
   - nuget restore
 build:
   verbosity: minimal
+artifacts:
+- path: Build\Release
+  name: Searcher
