@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Mail;
 using System.Text;
 using AegisImplicitMail;
 using CsQuery.ExtensionMethods.Internal;
@@ -26,8 +25,9 @@ namespace InfoSearcher
             // 1 collect data from output
             var dataFiles = Directory.GetFiles(_mainSettings.OutputDir, "*.dat", SearchOption.AllDirectories);
             var onlyNewData = dataFiles.Where(x =>
-                Path.GetDirectoryName(x).Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries)
-                    .Last().ToLowerInvariant() != ArchiveFolderName)
+                    Path.GetDirectoryName(x)
+                        ?.Split(new[] {Path.DirectorySeparatorChar}, StringSplitOptions.RemoveEmptyEntries)
+                        .Last().ToLowerInvariant() != ArchiveFolderName)
                 .ToList();
 
             var datas = onlyNewData.Select(x =>
@@ -67,7 +67,17 @@ namespace InfoSearcher
             foreach (var file in onlyNewData)
             {
                 var fileName = Path.GetFileName(file);
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    continue;
+                }
+                
                 var dir = Path.GetDirectoryName(file);
+                if (string.IsNullOrEmpty(dir))
+                {
+                    continue;
+                }
+                
                 var archiveDir = Path.Combine(dir, ArchiveFolderName);
                 if (!Directory.Exists(archiveDir))
                 {
@@ -95,18 +105,17 @@ namespace InfoSearcher
                 message.To.AddRange(toAddresses);
                 var mailAttachments = attachments.Select(x => new MimeAttachment(x));
                 message.Attachments.AddRange(mailAttachments);
-                
+
                 client.Host = mainSettings.Mail.SmtpServer;
                 client.Port = 465;
-               
-                    client.User = mainSettings.Mail.SmtpLogin;
-                    client.Password = mainSettings.Mail.SmtpPass;
 
-               
+                client.User = mainSettings.Mail.SmtpLogin;
+                client.Password = mainSettings.Mail.SmtpPass;
+
 
                 client.SslType = SslMode.Ssl;
                 client.AuthenticationMode = AuthenticationType.Base64;
-                
+
                 client.SendMail(message);
             }
         }

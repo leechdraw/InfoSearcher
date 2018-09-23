@@ -37,7 +37,7 @@ namespace InfoSearcher
                 var newsData = GetData(link);
                 var newsCq = CQ.Create(newsData);
                 var content = newsCq.Select(_config.NewsContentSelector);
-                var normalizedSearchList = _config.SearchFor.Select(x => x.ToLowerInvariant()).ToHashSet();
+                var normalizedSearchList = _config.SearchFor.Select(x => x.ToLowerInvariant()).ToArray();
                 var normalizedContent = string.Join("\r\n", content.Select(x=>x.InnerText)).ToLowerInvariant();
                 var isMatched = normalizedSearchList.Any(x => normalizedContent.Contains(x));
                 if (isMatched)
